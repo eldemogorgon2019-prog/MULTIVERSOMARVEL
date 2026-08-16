@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Marvel — Orden Cronológico</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#08080a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --black:#08080a;
+    --panel:#131418;
+    --panel-2:#1a1c22;
+    --panel-3:#101116;
+    --line:#2a2d35;
+    --red:#e0202a;
+    --red-deep:#8f0f18;
+    --gold:#d8ad4c;
+    --off:#eceef1;
+    --dim:#8b8f99;
+    --dim-2:#5e626c;
+    --purple:#7b4fd6;
+    --purple-deep:#3a1f6b;
+    --teal:#2fb8c6;
+    --teal-deep:#0f4d54;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(224,32,42,0.14), transparent 60%),
+      radial-gradient(1000px 500px at 90% 0%, rgba(123,79,214,0.10), transparent 55%),
+      radial-gradient(900px 500px at 50% 60%, rgba(47,184,198,0.06), transparent 55%),
+      var(--black);
+    color:var(--off);
+    font-family:'Inter',sans-serif;
+    padding:56px 40px 90px;
+  }
+
+  .wrap{max-width:1180px; margin:0 auto;}
+
+  header{margin-bottom:44px; position:relative;}
+  .eyebrow{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.45em;
+    font-size:14px;
+    color:var(--gold);
+    margin-bottom:10px;
+  }
+  .brand-row{display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
+  .brand-mark{
+    font-family:'Anton',sans-serif;
+    font-size:44px;
+    letter-spacing:1px;
+    background:var(--red);
+    color:var(--black);
+    padding:6px 18px 10px;
+    transform:skewX(-8deg);
+    box-shadow:0 0 0 3px var(--black), 0 0 0 5px var(--red-deep);
+  }
+  .brand-mark span{display:inline-block; transform:skewX(8deg);}
+  h1{
+    font-family:'Anton',sans-serif;
+    font-size:clamp(28px,4vw,50px);
+    line-height:1.02;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    background:linear-gradient(180deg,#fff, #cfd2d8 70%, var(--gold));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .subhead{
+    margin-top:10px;
+    font-size:14px;
+    color:var(--dim);
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    font-weight:600;
+  }
+  .header-line{
+    margin-top:26px;
+    height:1px;
+    background:linear-gradient(90deg, var(--red) 0%, var(--gold) 35%, transparent 90%);
+  }
+
+  .progress-strip{
+    margin-top:22px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-size:13px;
+    color:var(--dim);
+  }
+  .progress-track{
+    flex:1;
+    height:6px;
+    background:var(--panel-2);
+    border-radius:4px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--red), var(--gold));
+    transition:width .4s ease;
+  }
+  .progress-num{font-family:'Bebas Neue',sans-serif; letter-spacing:0.06em; color:var(--gold); font-size:14px;}
+
+  /* ---- Reusable section progress bar ---- */
+  .sec-progress{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:10px 0 4px;
+  }
+  .sec-progress .progress-track{height:5px;}
+  .sec-progress .progress-fill.c-red{background:linear-gradient(90deg, var(--red), var(--gold));}
+  .sec-progress .progress-fill.c-purple{background:linear-gradient(90deg, var(--purple-deep), var(--purple));}
+  .sec-progress .progress-fill.c-teal{background:linear-gradient(90deg, var(--teal-deep), var(--teal));}
+  .sec-progress .progress-fill.c-dim{background:linear-gradient(90deg, var(--dim-2), var(--dim));}
+  .sec-progress .pct{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:12px;
+    letter-spacing:0.05em;
+    color:var(--dim);
+    min-width:34px;
+    text-align:right;
+    flex-shrink:0;
+  }
+
+  .total-progress{
+    margin-top:56px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-top:3px solid var(--gold);
+    border-radius:10px;
+    padding:22px 26px;
+  }
+  .total-progress .block-title{font-size:20px;}
+  .total-progress .progress-track{height:9px; margin-top:12px;}
+  .total-progress .progress-fill{background:linear-gradient(90deg, var(--red), var(--purple) 45%, var(--teal) 75%, var(--gold));}
+  .total-progress .total-row{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+
+  /* ---- Tier labels ---- */
+  .tier-label{
+    display:flex; align-items:center; gap:10px;
+    margin:64px 0 6px;
+  }
+  .tier-label .pill{
+    font-family:'Inter',sans-serif;
+    font-size:10.5px;
+    font-weight:800;
+    letter-spacing:0.12em;
+    color:var(--black);
+    background:var(--gold);
+    padding:3px 10px;
+    border-radius:20px;
+    text-transform:uppercase;
+  }
+  .tier-label .txt{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:13px;
+    letter-spacing:0.14em;
+    color:var(--dim);
+    text-transform:uppercase;
+  }
+
+  .section-label{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;
+    letter-spacing:0.12em;
+    color:var(--off);
+    margin:44px 0 16px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .section-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+  .section-label .tag{
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    letter-spacing:0.1em;
+    font-weight:700;
+    color:var(--black);
+    background:var(--gold);
+    padding:3px 10px;
+    border-radius:3px;
+    text-transform:uppercase;
+  }
+
+  /* ---- Movie rows (UCM + Especial multiverso) ---- */
+  .movie-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:8px 24px;
+  }
+  .movie-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:9px 10px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:3px solid var(--red-deep);
+    border-radius:4px;
+    position:relative;
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .movie-row:hover{border-color:var(--gold);}
+  .movie-row.watched{
+    border-left-color:var(--gold);
+    background:linear-gradient(90deg, rgba(216,173,76,0.09), var(--panel) 30%);
+  }
+  .num{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:15px;
+    color:var(--black);
+    background:var(--dim);
+    min-width:26px;
+    height:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:4px;
+    flex-shrink:0;
+    transition:background .15s ease;
+  }
+  .movie-row.watched .num{background:var(--gold);}
+  .icon{font-size:17px; width:22px; text-align:center; flex-shrink:0;}
+  .title{font-size:13.5px; font-weight:600; flex:1; line-height:1.25;}
+  .year{font-size:11.5px; color:var(--dim); font-weight:500; flex-shrink:0;}
+  .check{
+    font-size:12px;
+    color:var(--black);
+    background:var(--gold);
+    width:18px;height:18px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    font-weight:800;
+    opacity:0;
+    transform:scale(0.4);
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  .movie-row.watched .check{opacity:1; transform:scale(1);}
+
+  .callout{
+    margin-top:20px;
+    padding:14px 16px;
+    border:1px dashed var(--line);
+    border-radius:6px;
+    font-size:12px;
+    color:var(--dim);
+    line-height:1.6;
+  }
+  .callout b{color:var(--off);}
+
+  /* ---- Series secundarias (principal, purple) ---- */
+  .series-block{
+    margin-top:20px;
+    background:
+      radial-gradient(800px 300px at 100% 0%, rgba(123,79,214,0.18), transparent 60%),
+      var(--panel);
+    border:1px solid var(--line);
+    border-top:3px solid var(--purple);
+    border-radius:10px;
+    padding:30px 30px 26px;
+  }
+  .block-head{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:6px;}
+  .block-title{
+    font-family:'Anton',sans-serif;
+    font-size:26px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--off);
+  }
+  .block-title em{font-style:normal;}
+  .series-block .block-title em{color:var(--purple); text-shadow:0 0 18px rgba(123,79,214,0.5);}
+  .block-count{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:13px;
+    letter-spacing:0.08em;
+    color:var(--dim);
+  }
+  .block-sub{font-size:12.5px; color:var(--dim); margin-bottom:22px;}
+
+  .series-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+  }
+  .series-card{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    user-select:none;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .series-card:hover{border-color:var(--purple);}
+  .series-card.watched{
+    background:linear-gradient(90deg, rgba(123,79,214,0.14), var(--panel-2) 40%);
+    border-color:var(--purple);
+  }
+  .series-card .box{
+    width:18px;height:18px;
+    border:2px solid var(--purple);
+    border-radius:4px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:800;
+    color:var(--black);
+    transition:background .15s ease;
+  }
+  .series-card.watched .box{background:var(--purple); color:#fff;}
+  .series-card .icon{font-size:19px; width:24px; text-align:center;}
+  .series-card .name{font-size:13px; font-weight:600; line-height:1.25;}
+
+  /* ---- Especial Multiverso (important, teal) ---- */
+  .em-block{
+    margin-top:20px;
+    background:
+      radial-gradient(800px 300px at 0% 0%, rgba(47,184,198,0.14), transparent 60%),
+      var(--panel);
+    border:1px solid var(--line);
+    border-top:3px solid var(--teal);
+    border-radius:10px;
+    padding:30px 30px 26px;
+  }
+  .em-block .block-title em{color:var(--teal); text-shadow:0 0 18px rgba(47,184,198,0.45);}
+  .em-group-label{
+    grid-column:1/-1;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:14px;
+    letter-spacing:0.1em;
+    color:var(--teal);
+    text-transform:uppercase;
+    margin:14px 0 4px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .em-group-label:first-child{margin-top:0;}
+  .em-block .movie-row{border-left-color:var(--teal-deep);}
+  .em-block .movie-row.watched{border-left-color:var(--teal); background:linear-gradient(90deg, rgba(47,184,198,0.1), var(--panel) 30%);}
+  .em-block .movie-row.watched .num{background:var(--teal); color:var(--black);}
+  .em-block .movie-row.watched .check{background:var(--teal);}
+
+  /* ---- Secondary tier: opcionales / animadas / cortos ---- */
+  .secondary-block{
+    margin-top:20px;
+    background:var(--panel-3);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:24px 26px 22px;
+  }
+  .secondary-block .block-title{font-size:19px; color:var(--dim);}
+  .secondary-block .block-title em{color:var(--dim-2); font-style:normal;}
+  .secondary-sub{font-size:12px; color:var(--dim-2); margin-bottom:18px;}
+  .mini-group-label{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:12px;
+    letter-spacing:0.1em;
+    color:var(--dim);
+    text-transform:uppercase;
+    margin:18px 0 8px;
+  }
+  .mini-group-label:first-of-type{margin-top:0;}
+  .chip-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:6px;
+  }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 9px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:5px;
+    font-size:11px;
+    font-weight:500;
+    color:var(--dim);
+    cursor:pointer;
+    user-select:none;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+    line-height:1.25;
+  }
+  .chip:hover{border-color:var(--dim-2);}
+  .chip .cbox{
+    width:12px;height:12px;
+    border:1.5px solid var(--dim-2);
+    border-radius:3px;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:8px;
+    color:var(--black);
+  }
+  .chip.watched{color:var(--off); background:var(--panel); border-color:var(--gold);}
+  .chip.watched .cbox{background:var(--gold); border-color:var(--gold); content:"";}
+  .chip.watched .cbox::after{content:"✓";}
+
+  footer{
+    margin-top:44px;
+    text-align:center;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--dim);
+    text-transform:uppercase;
+  }
+  .hint{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--dim);
+    margin-top:14px;
+  }
+
+  @media(max-width:760px){
+    body{padding:34px 16px 60px;}
+    .movie-grid{grid-template-columns:1fr;}
+    .series-grid{grid-template-columns:1fr;}
+    .chip-grid{grid-template-columns:repeat(2, 1fr);}
+    .brand-mark{font-size:32px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">L Í N E A   T E M P O R A L   C O M P L E T A</div>
+    <div class="brand-row">
+      <div class="brand-mark"><span>MARVEL</span></div>
+      <h1>Orden cronológico<br>del multiverso</h1>
+    </div>
+    <div class="header-line"></div>
+  </header>
+
+  <!-- ======================= PRINCIPAL 1: UCM + MULTIVERSO ======================= -->
+  <div class="tier-label"><span class="pill">Principal</span><span class="txt">UCM + Multiverso</span></div>
+  <div class="sec-progress">
+    <span class="progress-num" id="progressNum">0 / 54</span>
+    <div class="progress-track"><div class="progress-fill c-red" id="progressFill"></div></div>
+    <span class="pct" id="progressPct">0%</span>
+  </div>
+
+  <div class="section-label"><span class="tag">01–23</span> Saga del infinito</div>
+  <div class="movie-grid" id="grid1">
+    <div class="movie-row" data-id="m01"><span class="num">1</span><span class="icon">🛡️</span><span class="title">Capitán América: El primer vengador</span><span class="check">✓</span><span class="year">2011</span></div>
+    <div class="movie-row" data-id="m02"><span class="num">2</span><span class="icon">⭐</span><span class="title">Capitana Marvel</span><span class="check">✓</span><span class="year">2019</span></div>
+    <div class="movie-row" data-id="m03"><span class="num">3</span><span class="icon">🤖</span><span class="title">Iron Man</span><span class="check">✓</span><span class="year">2008</span></div>
+    <div class="movie-row" data-id="m04"><span class="num">4</span><span class="icon">🤖</span><span class="title">Iron Man 2</span><span class="check">✓</span><span class="year">2010</span></div>
+    <div class="movie-row" data-id="m05"><span class="num">5</span><span class="icon">🟢</span><span class="title">El increíble Hulk</span><span class="check">✓</span><span class="year">2008</span></div>
+    <div class="movie-row" data-id="m06"><span class="num">6</span><span class="icon">🔨</span><span class="title">Thor</span><span class="check">✓</span><span class="year">2011</span></div>
+    <div class="movie-row" data-id="m07"><span class="num">7</span><span class="icon">Ⓐ</span><span class="title">Los Vengadores</span><span class="check">✓</span><span class="year">2012</span></div>
+    <div class="movie-row" data-id="m08"><span class="num">8</span><span class="icon">🔨</span><span class="title">Thor: El mundo oscuro</span><span class="check">✓</span><span class="year">2013</span></div>
+    <div class="movie-row" data-id="m09"><span class="num">9</span><span class="icon">🤖</span><span class="title">Iron Man 3</span><span class="check">✓</span><span class="year">2013</span></div>
+    <div class="movie-row" data-id="m10"><span class="num">10</span><span class="icon">🛡️</span><span class="title">Capitán América: El soldado de invierno</span><span class="check">✓</span><span class="year">2014</span></div>
+    <div class="movie-row" data-id="m11"><span class="num">11</span><span class="icon">🌌</span><span class="title">Guardianes de la Galaxia</span><span class="check">✓</span><span class="year">2014</span></div>
+    <div class="movie-row" data-id="m12"><span class="num">12</span><span class="icon">🌌</span><span class="title">Guardianes de la Galaxia Vol. 2</span><span class="check">✓</span><span class="year">2017</span></div>
+    <div class="movie-row" data-id="m13"><span class="num">13</span><span class="icon">Ⓐ</span><span class="title">Vengadores: La era de Ultrón</span><span class="check">✓</span><span class="year">2015</span></div>
+    <div class="movie-row" data-id="m14"><span class="num">14</span><span class="icon">🐜</span><span class="title">Ant-Man</span><span class="check">✓</span><span class="year">2015</span></div>
+    <div class="movie-row" data-id="m15"><span class="num">15</span><span class="icon">🛡️</span><span class="title">Capitán América: Civil War</span><span class="check">✓</span><span class="year">2016</span></div>
+    <div class="movie-row" data-id="m16"><span class="num">16</span><span class="icon">🕸️</span><span class="title">Viuda Negra</span><span class="check">✓</span><span class="year">2021</span></div>
+    <div class="movie-row" data-id="m17"><span class="num">17</span><span class="icon">🐈‍⬛</span><span class="title">Black Panther</span><span class="check">✓</span><span class="year">2018</span></div>
+    <div class="movie-row" data-id="m18"><span class="num">18</span><span class="icon">🕷️</span><span class="title">Spider-Man: Homecoming</span><span class="check">✓</span><span class="year">2017</span></div>
+    <div class="movie-row" data-id="m19"><span class="num">19</span><span class="icon">🌀</span><span class="title">Doctor Strange</span><span class="check">✓</span><span class="year">2016</span></div>
+    <div class="movie-row" data-id="m20"><span class="num">20</span><span class="icon">🔨</span><span class="title">Thor: Ragnarok</span><span class="check">✓</span><span class="year">2017</span></div>
+    <div class="movie-row" data-id="m21"><span class="num">21</span><span class="icon">🐜</span><span class="title">Ant-Man y la Avispa</span><span class="check">✓</span><span class="year">2018</span></div>
+    <div class="movie-row" data-id="m22"><span class="num">22</span><span class="icon">Ⓐ</span><span class="title">Vengadores: Infinity War</span><span class="check">✓</span><span class="year">2018</span></div>
+    <div class="movie-row" data-id="m23"><span class="num">23</span><span class="icon">Ⓐ</span><span class="title">Vengadores: Endgame</span><span class="check">✓</span><span class="year">2019</span></div>
+  </div>
+
+  <div class="section-label"><span class="tag">24–36</span> Multiverso · saga del multiverso</div>
+  <div class="movie-grid" id="grid2">
+    <div class="movie-row" data-id="m24"><span class="num">24</span><span class="icon">🐍</span><span class="title">Loki</span><span class="check">✓</span><span class="year">2021</span></div>
+    <div class="movie-row" data-id="m25"><span class="num">25</span><span class="icon">🧙‍♀️</span><span class="title">WandaVision</span><span class="check">✓</span><span class="year">2021</span></div>
+    <div class="movie-row" data-id="m26"><span class="num">26</span><span class="icon">💍</span><span class="title">Shang-Chi y la leyenda de los Diez Anillos</span><span class="check">✓</span><span class="year">2021</span></div>
+    <div class="movie-row" data-id="m27"><span class="num">27</span><span class="icon">🕷️</span><span class="title">Spider-Man: Lejos de casa</span><span class="check">✓</span><span class="year">2019</span></div>
+    <div class="movie-row" data-id="m28"><span class="num">28</span><span class="icon">🦅</span><span class="title">Falcon y el Soldado de Invierno</span><span class="check">✓</span><span class="year">2021</span></div>
+    <div class="movie-row" data-id="m29"><span class="num">29</span><span class="icon">🪐</span><span class="title">Eternals</span><span class="check">✓</span><span class="year">2021</span></div>
+    <div class="movie-row" data-id="m30"><span class="num">30</span><span class="icon">🕷️</span><span class="title">Spider-Man: No Way Home</span><span class="check">✓</span><span class="year">2021</span></div>
+    <div class="movie-row" data-id="m31"><span class="num">31</span><span class="icon">🌀</span><span class="title">Doctor Strange en el multiverso de la locura</span><span class="check">✓</span><span class="year">2022</span></div>
+    <div class="movie-row" data-id="m32"><span class="num">32</span><span class="icon">🐈‍⬛</span><span class="title">Black Panther: Wakanda Forever</span><span class="check">✓</span><span class="year">2022</span></div>
+    <div class="movie-row" data-id="m33"><span class="num">33</span><span class="icon">🔨</span><span class="title">Thor: Love and Thunder</span><span class="check">✓</span><span class="year">2022</span></div>
+    <div class="movie-row" data-id="m34"><span class="num">34</span><span class="icon">🐜</span><span class="title">Ant-Man y la Avispa: Quantumanía</span><span class="check">✓</span><span class="year">2023</span></div>
+    <div class="movie-row" data-id="m35"><span class="num">35</span><span class="icon">🌌</span><span class="title">Guardianes de la Galaxia Vol. 3</span><span class="check">✓</span><span class="year">2023</span></div>
+    <div class="movie-row" data-id="m36"><span class="num">36</span><span class="icon">✨</span><span class="title">The Marvels</span><span class="check">✓</span><span class="year">2023</span></div>
+  </div>
+
+  <div class="section-label"><span class="tag">37–45</span> Universo mutante (X-Men)</div>
+  <div class="movie-grid" id="grid3">
+    <div class="movie-row" data-id="m37"><span class="num">37</span><span class="icon">🧬</span><span class="title">X-Men: Primera generación</span><span class="check">✓</span><span class="year">2011</span></div>
+    <div class="movie-row" data-id="m38"><span class="num">38</span><span class="icon">🗡️</span><span class="title">X-Men: Origen de Lobezno</span><span class="check">✓</span><span class="year">2009</span></div>
+    <div class="movie-row" data-id="m39"><span class="num">39</span><span class="icon">🧬</span><span class="title">X-Men</span><span class="check">✓</span><span class="year">2000</span></div>
+    <div class="movie-row" data-id="m40"><span class="num">40</span><span class="icon">🧬</span><span class="title">X2</span><span class="check">✓</span><span class="year">2003</span></div>
+    <div class="movie-row" data-id="m41"><span class="num">41</span><span class="icon">🧬</span><span class="title">X-Men: La decisión final</span><span class="check">✓</span><span class="year">2006</span></div>
+    <div class="movie-row" data-id="m42"><span class="num">42</span><span class="icon">🗡️</span><span class="title">Lobezno Inmortal</span><span class="check">✓</span><span class="year">2013</span></div>
+    <div class="movie-row" data-id="m43"><span class="num">43</span><span class="icon">🧬</span><span class="title">X-Men: Días del futuro pasado</span><span class="check">✓</span><span class="year">2014</span></div>
+    <div class="movie-row" data-id="m44"><span class="num">44</span><span class="icon">🧬</span><span class="title">X-Men: Apocalipsis</span><span class="check">✓</span><span class="year">2016</span></div>
+    <div class="movie-row" data-id="m45"><span class="num">45</span><span class="icon">🔥</span><span class="title">X-Men: Fénix Oscura</span><span class="check">✓</span><span class="year">2019</span></div>
+  </div>
+
+  <div class="section-label"><span class="tag">46–50</span> Deadpool & Lobezno</div>
+  <div class="movie-grid" id="grid4">
+    <div class="movie-row" data-id="m46"><span class="num">46</span><span class="icon">💀</span><span class="title">Deadpool</span><span class="check">✓</span><span class="year">2016</span></div>
+    <div class="movie-row" data-id="m47"><span class="num">47</span><span class="icon">🧠</span><span class="title">The New Mutants</span><span class="check">✓</span><span class="year">2020</span></div>
+    <div class="movie-row" data-id="m48"><span class="num">48</span><span class="icon">💀</span><span class="title">Deadpool 2</span><span class="check">✓</span><span class="year">2018</span></div>
+    <div class="movie-row" data-id="m49"><span class="num">49</span><span class="icon">🗡️</span><span class="title">Logan</span><span class="check">✓</span><span class="year">2017</span></div>
+    <div class="movie-row" data-id="m50"><span class="num">50</span><span class="icon">💀</span><span class="title">Deadpool y Lobezno</span><span class="check">✓</span><span class="year">2024</span></div>
+  </div>
+
+  <div class="section-label"><span class="tag">51–54</span> Nueva era MCU</div>
+  <div class="movie-grid" id="grid5">
+    <div class="movie-row" data-id="m51"><span class="num">51</span><span class="icon">🛡️</span><span class="title">Capitán América: Brave New World</span><span class="check">✓</span><span class="year">2025</span></div>
+    <div class="movie-row" data-id="m52"><span class="num">52</span><span class="icon">⚡</span><span class="title">Thunderbolts*</span><span class="check">✓</span><span class="year">2025</span></div>
+    <div class="movie-row" data-id="m53"><span class="num">53</span><span class="icon">🔷</span><span class="title">Los 4 Fantásticos: Primeros pasos</span><span class="check">✓</span><span class="year">2025</span></div>
+    <div class="movie-row" data-id="m54"><span class="num">54</span><span class="icon">🕷️</span><span class="title">Spider-Man: Brand New Day</span><span class="check">✓</span><span class="year">2026</span></div>
+  </div>
+
+  <div class="callout">
+    <b>Nota:</b> este es el orden cronológico interno de la historia, no el orden de estreno. El bloque de X-Men, Deadpool y Lobezno pertenece a una línea temporal propia (pre-reinicio del multiverso) que se conecta con el MCU a partir de <b>Deadpool y Lobezno</b> (2024).
+  </div>
+
+  <!-- ======================= PRINCIPAL 2: SERIES SECUNDARIAS ======================= -->
+  <div class="tier-label"><span class="pill">Principal</span><span class="txt">Series secundarias</span></div>
+  <div class="series-block">
+    <div class="block-head">
+      <div class="block-title">Series <em>secundarias</em></div>
+      <div class="block-count" id="seriesCount">0 / 15 vistas</div>
+    </div>
+    <div class="block-sub">Toca una tarjeta para marcarla como vista — se guarda solo.</div>
+    <div class="sec-progress">
+      <div class="progress-track"><div class="progress-fill c-purple" id="seriesFill"></div></div>
+      <span class="pct" id="seriesPct">0%</span>
+    </div>
+    <div class="series-grid" id="seriesGrid">
+      <div class="series-card" data-id="s00"><span class="box"></span><span class="icon">🕸️</span><span class="name">Spider-Noir</span></div>
+      <div class="series-card" data-id="s01"><span class="box"></span><span class="icon">🕵️‍♀️</span><span class="name">Agente Carter</span></div>
+      <div class="series-card" data-id="s02"><span class="box"></span><span class="icon">⚖️</span><span class="name">Daredevil</span></div>
+      <div class="series-card" data-id="s03"><span class="box"></span><span class="icon">🟣</span><span class="name">Jessica Jones</span></div>
+      <div class="series-card" data-id="s04"><span class="box"></span><span class="icon">🟡</span><span class="name">Luke Cage</span></div>
+      <div class="series-card" data-id="s05"><span class="box"></span><span class="icon">👊</span><span class="name">Iron Fist</span></div>
+      <div class="series-card" data-id="s06"><span class="box"></span><span class="icon">🛡️</span><span class="name">The Defenders</span></div>
+      <div class="series-card" data-id="s07"><span class="box"></span><span class="icon">💀</span><span class="name">The Punisher</span></div>
+      <div class="series-card" data-id="s08"><span class="box"></span><span class="icon">🏹</span><span class="name">Hawkeye</span></div>
+      <div class="series-card" data-id="s09"><span class="box"></span><span class="icon">✋</span><span class="name">Echo</span></div>
+      <div class="series-card" data-id="s10"><span class="box"></span><span class="icon">🌙</span><span class="name">Moon Knight</span></div>
+      <div class="series-card" data-id="s11"><span class="box"></span><span class="icon">⚡</span><span class="name">Ms. Marvel</span></div>
+      <div class="series-card" data-id="s12"><span class="box"></span><span class="icon">🔮</span><span class="name">Agatha All Along</span></div>
+      <div class="series-card" data-id="s13"><span class="box"></span><span class="icon">⚖️</span><span class="name">Daredevil: Born Again</span></div>
+      <div class="series-card" data-id="s14"><span class="box"></span><span class="icon">🧠</span><span class="name">Wonder Man</span></div>
+    </div>
+  </div>
+
+  <!-- ======================= IMPORTANTE: ESPECIAL MULTIVERSO ======================= -->
+  <div class="tier-label"><span class="pill">Importante</span><span class="txt">Especial multiverso</span></div>
+  <div class="em-block">
+    <div class="block-head">
+      <div class="block-title"><em>Especial</em> Multiverso</div>
+      <div class="block-count" id="emCount">0 / 26 vistas</div>
+    </div>
+    <div class="block-sub">Películas fuera de continuidad MCU — otros actores, otros universos.</div>
+    <div class="sec-progress">
+      <div class="progress-track"><div class="progress-fill c-teal" id="emFill"></div></div>
+      <span class="pct" id="emPct">0%</span>
+    </div>
+    <div class="movie-grid" id="emGrid"></div>
+  </div>
+
+  <!-- ======================= SECUNDARIO: OPCIONALES + ANIMADAS + CORTOS ======================= -->
+  <div class="tier-label"><span class="pill">Secundario</span><span class="txt">Opcional · animación · cortos</span></div>
+  <div class="secondary-block">
+    <div class="block-head">
+      <div class="block-title"><em>Extras</em></div>
+      <div class="block-count" id="secCount">0 / 42 vistas</div>
+    </div>
+    <div class="secondary-sub">Series opcionales, animación y cortos — contenido complementario, no imprescindible.</div>
+    <div class="sec-progress">
+      <div class="progress-track"><div class="progress-fill c-dim" id="secFill"></div></div>
+      <span class="pct" id="secPct">0%</span>
+    </div>
+    <div id="secondaryContainer"></div>
+  </div>
+
+  <div class="total-progress">
+    <div class="total-row">
+      <div class="block-title">Progreso total</div>
+      <span class="progress-num" id="totalNum">0 / 0 vistas</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="totalFill"></div></div>
+  </div>
+
+  <div class="hint">Tu progreso se guarda automáticamente en este póster, aunque cierres y vuelvas más tarde.</div>
+
+  <footer>Hecho a medida · orden cronológico del multiverso Marvel</footer>
+</div>
+
+<script>
+(function(){
+  var STATE_KEY = "marvel-poster-state-v3";
+  var initiallyWatchedMovies = ["m01","m02","m03","m04","m05","m06","m18","m27","m30","m54"];
+
+  // ---------- Especial Multiverso data ----------
+  var emData = [
+    {group:"🕷️ Spider-Man — Tobey Maguire", items:[
+      ["em01","🕷️","Spider-Man","2002"],
+      ["em02","🕷️","Spider-Man 2","2004"],
+      ["em03","🕷️","Spider-Man 3","2007"]
+    ]},
+    {group:"🕸️ Spider-Man — Andrew Garfield", items:[
+      ["em04","🕸️","The Amazing Spider-Man","2012"],
+      ["em05","🕸️","The Amazing Spider-Man 2: El poder de Electro","2014"]
+    ]},
+    {group:"🩸 Venom", items:[
+      ["em06","🩸","Venom","2018"],
+      ["em07","🩸","Venom: Habrá matanza","2021"],
+      ["em08","🩸","Venom: El último baile","2024"]
+    ]},
+    {group:"🕷️ Spider-Verse", items:[
+      ["em09","🌀","Spider-Man: Un nuevo universo","2018"],
+      ["em10","🌀","Spider-Man: Cruzando el multiverso","2023"],
+      ["em11","🌀","Spider-Man: Más allá del Spider-Verso","—"]
+    ]},
+    {group:"🧬 Los 4 Fantásticos", items:[
+      ["em12","🔷","Los 4 Fantásticos","2005"],
+      ["em13","🔷","Los 4 Fantásticos y Silver Surfer","2007"],
+      ["em14","🔷","Los 4 Fantásticos","2015"]
+    ]},
+    {group:"🩸 Blade", items:[
+      ["em15","🩸","Blade","1998"],
+      ["em16","🩸","Blade II","2002"],
+      ["em17","🩸","Blade: Trinity","2004"]
+    ]},
+    {group:"🔥 Ghost Rider", items:[
+      ["em18","🔥","Ghost Rider: El motorista fantasma","2007"],
+      ["em19","🔥","Ghost Rider: Espíritu de venganza","2011"]
+    ]},
+    {group:"⚖️ Daredevil / Elektra", items:[
+      ["em20","⚖️","Daredevil","2003"],
+      ["em21","🗡️","Elektra","2005"]
+    ]},
+    {group:"💀 Punisher", items:[
+      ["em22","💀","The Punisher","2004"],
+      ["em23","💀","Punisher: War Zone","2008"]
+    ]},
+    {group:"🟢 Hulk", items:[
+      ["em24","🟢","Hulk","2003"]
+    ]},
+    {group:"👽 Otras", items:[
+      ["em25","🦆","Howard, un nuevo héroe","1986"],
+      ["em26","🌿","Man-Thing: La naturaleza del miedo","2005"]
+    ]}
+  ];
+
+  // ---------- Secondary data (opcionales, animadas, cortos) ----------
+  var secData = [
+    {group:"Series opcionales", items:[
+      ["op1","🟢","She-Hulk: Abogada Hulka"],
+      ["op2","🔧","Ironheart"],
+      ["op3","🛰️","Secret Invasion"],
+      ["op4","💀","The Punisher: One Last Kill"]
+    ]},
+    {group:"Series animadas", items:[
+      ["an1","❓","What If...?"],
+      ["an2","🌱","I Am Groot"],
+      ["an3","🧬","X-Men '97"],
+      ["an4","🕷️","Tu amigo y vecino Spider-Man"],
+      ["an5","🧟","Marvel Zombies"],
+      ["an6","🐈‍⬛","Eyes of Wakanda"],
+      ["an7","🤖","M.O.D.O.K."],
+      ["an8","🐒","Hit-Monkey"],
+      ["an9","🦕","Moon Girl y Dinosaurio Diabólico"],
+      ["an10","🕷️","Spidey y su Superequipo"],
+      ["an11","👻","Marvel Rising: Chasing Ghosts"],
+      ["an12","🦾","Marvel Rising: Heart of Iron"],
+      ["an13","🎸","Marvel Rising: Battle of the Bands"],
+      ["an14","🐈‍⬛","Marvel Rising: Operation Shuri"],
+      ["an15","🔥","Marvel Rising: Playing with Fire"],
+      ["an16","🕷️","Ultimate Spider-Man"],
+      ["an17","Ⓐ","Avengers Assemble"],
+      ["an18","🟢","Hulk y los agentes de S.M.A.S.H."],
+      ["an19","🌌","Guardianes de la Galaxia"],
+      ["an20","🕷️","Marvel's Spider-Man"],
+      ["an21","🐺","Wolverine y los X-Men"],
+      ["an22","🧬","X-Men: Evolution"],
+      ["an23","🧬","X-Men: The Animated Series"],
+      ["an24","🕷️","Spider-Man Unlimited"],
+      ["an25","🕷️","Spider-Man and His Amazing Friends"],
+      ["an26","🤖","Iron Man: Aventuras de hierro"],
+      ["an27","🏄","Silver Surfer"],
+      ["an28","🟢","El increíble Hulk"],
+      ["an29","Ⓐ","Avengers: Earth's Mightiest Heroes"],
+      ["an30","Ⓐ","Avengers: United They Stand"]
+    ]},
+    {group:"Cortos", items:[
+      ["co1","🥃","El consultor"],
+      ["co2","🔨","Algo divertido ocurrió de camino al martillo de Thor"],
+      ["co3","🎯","Item 47"],
+      ["co4","🕵️‍♀️","Agente Carter — Marvel One-Shot"],
+      ["co5","👑","Todos aclaman al Rey"],
+      ["co6","⚡","Team Thor"],
+      ["co7","⚡","Team Thor: Parte 2"],
+      ["co8","🐕","Team Darryl"],
+      ["co9","📝","Peter's To-Do List"]
+    ]}
+  ];
+
+  // ---------- Render Especial Multiverso ----------
+  var emGrid = document.getElementById("emGrid");
+  emData.forEach(function(g){
+    var label = document.createElement("div");
+    label.className = "em-group-label";
+    label.textContent = g.group;
+    emGrid.appendChild(label);
+    g.items.forEach(function(it){
+      var row = document.createElement("div");
+      row.className = "movie-row";
+      row.dataset.id = it[0];
+      row.innerHTML = '<span class="num">•</span><span class="icon">'+it[1]+'</span><span class="title">'+it[2]+'</span><span class="check">✓</span><span class="year">'+it[3]+'</span>';
+      emGrid.appendChild(row);
+    });
+  });
+
+  // ---------- Render Secondary (chips) ----------
+  var secContainer = document.getElementById("secondaryContainer");
+  secData.forEach(function(g){
+    var label = document.createElement("div");
+    label.className = "mini-group-label";
+    label.textContent = g.group;
+    secContainer.appendChild(label);
+    var grid = document.createElement("div");
+    grid.className = "chip-grid";
+    g.items.forEach(function(it){
+      var chip = document.createElement("div");
+      chip.className = "chip";
+      chip.dataset.id = it[0];
+      chip.innerHTML = '<span class="cbox"></span><span class="icon" style="font-size:13px;width:16px;">'+it[1]+'</span><span>'+it[2]+'</span>';
+      grid.appendChild(chip);
+    });
+    secContainer.appendChild(grid);
+  });
+
+  // ---------- Wire up interactivity ----------
+  var movieRows = Array.prototype.slice.call(document.querySelectorAll("#grid1 .movie-row, #grid2 .movie-row, #grid3 .movie-row, #grid4 .movie-row, #grid5 .movie-row"));
+  var seriesCards = Array.prototype.slice.call(document.querySelectorAll(".series-card"));
+  var emRows = Array.prototype.slice.call(document.querySelectorAll("#emGrid .movie-row"));
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+
+  var state = {};
+
+  function updateProgress(){
+    var total = movieRows.length;
+    var watched = movieRows.filter(function(r){ return state[r.dataset.id]; }).length;
+    var pct = Math.round((watched/total)*100);
+    document.getElementById("progressNum").textContent = watched + " / " + total;
+    document.getElementById("progressPct").textContent = pct + "%";
+    document.getElementById("progressFill").style.width = pct + "%";
+
+    var sWatched = seriesCards.filter(function(c){ return state[c.dataset.id]; }).length;
+    var sPct = Math.round((sWatched/seriesCards.length)*100);
+    document.getElementById("seriesCount").textContent = sWatched + " / " + seriesCards.length + " vistas";
+    document.getElementById("seriesFill").style.width = sPct + "%";
+    document.getElementById("seriesPct").textContent = sPct + "%";
+
+    var emWatched = emRows.filter(function(r){ return state[r.dataset.id]; }).length;
+    var emPct = Math.round((emWatched/emRows.length)*100);
+    document.getElementById("emCount").textContent = emWatched + " / " + emRows.length + " vistas";
+    document.getElementById("emFill").style.width = emPct + "%";
+    document.getElementById("emPct").textContent = emPct + "%";
+
+    var cWatched = chips.filter(function(c){ return state[c.dataset.id]; }).length;
+    var cPct = Math.round((cWatched/chips.length)*100);
+    document.getElementById("secCount").textContent = cWatched + " / " + chips.length + " vistas";
+    document.getElementById("secFill").style.width = cPct + "%";
+    document.getElementById("secPct").textContent = cPct + "%";
+
+    var allTotal = movieRows.length + seriesCards.length + emRows.length + chips.length;
+    var allWatched = watched + sWatched + emWatched + cWatched;
+    var allPct = Math.round((allWatched/allTotal)*100);
+    document.getElementById("totalNum").textContent = allWatched + " / " + allTotal + " vistas";
+    document.getElementById("totalFill").style.width = allPct + "%";
+  }
+
+  function applyRow(el){ el.classList.toggle("watched", !!state[el.dataset.id]); }
+  function applyChip(el){ el.classList.toggle("watched", !!state[el.dataset.id]); }
+
+  function loadState(){
+    try{
+      var saved = localStorage.getItem(STATE_KEY);
+      state = saved ? JSON.parse(saved) : {};
+      if(!saved){
+        initiallyWatchedMovies.forEach(function(id){ state[id] = true; });
+        localStorage.setItem(STATE_KEY, JSON.stringify(state));
+      }
+    }catch(e){
+      state = {};
+      initiallyWatchedMovies.forEach(function(id){ state[id] = true; });
+    }
+    movieRows.forEach(applyRow);
+    seriesCards.forEach(applyRow);
+    emRows.forEach(applyRow);
+    chips.forEach(applyChip);
+    updateProgress();
+  }
+
+  function saveState(){
+    try{ localStorage.setItem(STATE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  function wire(el, applyFn){
+    el.addEventListener("click", function(){
+      var id = el.dataset.id;
+      state[id] = !state[id];
+      applyFn(el);
+      updateProgress();
+      saveState();
+    });
+  }
+  movieRows.forEach(function(r){ wire(r, applyRow); });
+  seriesCards.forEach(function(r){ wire(r, applyRow); });
+  emRows.forEach(function(r){ wire(r, applyRow); });
+  chips.forEach(function(c){ wire(c, applyChip); });
+
+  loadState();
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./service-worker.js');
+  });
+}
+</script>
+</body>
+</html>
